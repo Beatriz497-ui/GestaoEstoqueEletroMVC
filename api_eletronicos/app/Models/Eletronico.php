@@ -13,14 +13,20 @@ class Eletronico
         $this->db = $db;
     }
 
-    /**
-     * Retorna todos os produtos eletrônicos ativos com saldo de estoque.
-     */
-    public function listarTodos(): array
+    public function listarAtivos(): array
     {
-        $sql = "SELECT e.*, COALESCE(est.quantidade_atual, 0) AS quantidade_atual
+        $sql = "SELECT 
+                    e.id_eletronico,
+                    e.nome,
+                    e.descricao,
+                    e.numero_lote,
+                    e.fabricante,
+                    e.categoria,
+                    e.preco,
+                    e.estoque_minimo,
+                    COALESCE(s.quantidade_atual, 0) AS saldo
                 FROM eletronicos e
-                LEFT JOIN estoque est ON e.id_eletronico = est.id_eletronico
+                LEFT JOIN estoque s ON e.id_eletronico = s.id_eletronico
                 WHERE e.ativo = 1";
 
         $stmt = $this->db->prepare($sql);

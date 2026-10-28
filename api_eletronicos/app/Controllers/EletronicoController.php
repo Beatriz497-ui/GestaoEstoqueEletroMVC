@@ -7,19 +7,27 @@ use App\Views\JsonView;
 
 class EletronicoController
 {
-    private Eletronico $eletronicoModel;
+    private Eletronico $model;
 
-    public function __construct(Eletronico $eletronicoModel)
+    public function __construct(Eletronico $model)
     {
-        $this->eletronicoModel = $eletronicoModel;
+        $this->model = $model;
     }
 
-    /**
-     * Ação responsável por listar todos os eletrônicos ativos.
-     */
     public function listar(): void
     {
-        $eletronicos = $this->eletronicoModel->listarTodos();
-        JsonView::sucesso($eletronicos);
+        try {
+            $produtos = $this->model->listarAtivos();
+
+            JsonView::render(200, [
+                "status" => "sucesso",
+                "dados" => $produtos
+            ]);
+        } catch (\PDOException $e) {
+            JsonView::render(500, [
+                "status" => "erro",
+                "mensagem" => "Erro ao consultar o banco de dados."
+            ]);
+        }
     }
 }
